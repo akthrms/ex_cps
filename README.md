@@ -23,3 +23,7 @@ iex> add(1, 2, fn x ->
 ...> end)
 5
 ```
+
+## 参考サイト
+
+- [Haskell で継続渡しスタイル (CPS) | すぐに忘れる脳みそのためのメモ](https://jutememo.blogspot.com/2011/05/haskell-cps.html)
