@@ -10,4 +10,10 @@ defmodule ExCps.Normal do
   @spec sub(number(), number()) :: number()
 
   def sub(x, y), do: x - y
+
+  @spec fact(non_neg_integer()) :: pos_integer()
+
+  def fact(0), do: 1
+
+  def fact(n) when n > 0, do: n * fact(n - 1)
 end
