@@ -99,6 +99,31 @@ iex> fib(7, fn x -> x end)
 13
 ```
 
+## リストの平坦化
+
+```elixir
+# CPS
+
+iex> import ExCps.Cps
+ExCps.Cps
+
+iex> concat([[1, 2], [3, 4], [5, 6]], fn x -> x end)
+[1, 2, 3, 4, 5, 6]
+
+iex> concat([[1, 2], [3, 4], [], [5, 6]], fn x -> x end)
+[]
+
+concat([[1, 2], [3, 4], [5, 6]], fn x -> x end)
+=> concat([[3, 4], [5, 6]], fn xss -> (fn x -> x end).([1, 2] ++ xss) end)
+=> concat([[5, 6]], fn xss -> (fn xss -> (fn x -> x end).([1, 2] ++ xss) end).([3, 4] ++ xss) end)
+=> concat([], fn xss -> (fn xss -> (fn xss -> (fn x -> x end).([1, 2] ++ xss) end).([3, 4] ++ xss) end).([5, 6] ++ xss) end)
+=> (fn xss -> (fn xss -> (fn xss -> (fn x -> x end).([1, 2] ++ xss) end).([3, 4] ++ xss) end).([5, 6] ++ xss) end).([])
+=> (fn xss -> (fn xss -> (fn x -> x end).([1, 2] ++ xss) end).([3, 4] ++ xss) end).([5, 6])
+=> (fn xss -> (fn x -> x end).([1, 2] ++ xss) end).([3, 4, 5, 6])
+=> (fn x -> x end).([1, 2, 3, 4, 5, 6])
+=> [1, 2, 3, 4, 5, 6]
+```
+
 ## 参考サイト
 
 - [Haskell で継続渡しスタイル (CPS) | すぐに忘れる脳みそのためのメモ](https://jutememo.blogspot.com/2011/05/haskell-cps.html)

@@ -48,4 +48,12 @@ defmodule ExCps.Cps do
       end)
     end)
   end
+
+  @spec concat(maybe_improper_list(), (any() -> any())) :: any()
+
+  def concat([], k), do: k.([])
+
+  def concat([[] | _], _), do: []
+
+  def concat([xs | xss], k), do: concat(xss, fn xss_ -> k.(xs ++ xss_) end)
 end
