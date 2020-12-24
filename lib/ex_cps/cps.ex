@@ -56,4 +56,10 @@ defmodule ExCps.Cps do
   def concat([[] | _], _), do: []
 
   def concat([xs | xss], k), do: concat(xss, fn xss_ -> k.(xs ++ xss_) end)
+
+  @spec foldr((any() -> any()), any(), [any()], (any() -> any())) :: any()
+
+  def foldr(_, z, [], k), do: k.(z)
+
+  def foldr(f, z, [x | xs], k), do: foldr(f, z, xs, fn y -> k.(f.(x, y)) end)
 end

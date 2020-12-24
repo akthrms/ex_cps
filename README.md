@@ -124,6 +124,34 @@ concat([[1, 2], [3, 4], [5, 6]], fn x -> x end)
 => [1, 2, 3, 4, 5, 6]
 ```
 
+## foldr（畳み込み関数）
+
+```elixir
+# CPS
+
+iex> import ExCps.Cps
+ExCps.Cps
+
+iex> add = fn x, y -> x + y end
+#Function<43.97283095/2 in :erl_eval.expr/5>
+
+iex> id = fn x -> x end
+#Function<44.97283095/1 in :erl_eval.expr/5>
+
+iex> foldr(add, 0, 1..10 |> Enum.to_list(), id)
+55
+
+foldr(add, 0, [1, 2, 3], id)
+=> foldr(add, 0, [2, 3], fn x -> id.(add.(1, x)) end)
+=> foldr(add, 0, [3], fn x -> (fn x -> id.(add.(1, x)) end).(add.(2, x)) end)
+=> foldr(add, 0, [], fn x -> (fn x -> (fn x -> id.(add.(1, x)) end).(add.(2, x)) end).(add.(3, x)) end)
+=> (fn x -> (fn x -> (fn x -> id.(add.(1, x)) end).(add.(2, x)) end).(add.(3, x)) end).(0)
+=> (fn x -> (fn x -> id.(add.(1, x)) end).(add.(2, x)).(3)
+=> (fn x -> id.(add.(1, x)) end).(5)
+=> id.(6)
+=> 6
+```
+
 ## 参考サイト
 
 - [Haskell で継続渡しスタイル (CPS) | すぐに忘れる脳みそのためのメモ](https://jutememo.blogspot.com/2011/05/haskell-cps.html)
